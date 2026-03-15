@@ -2770,9 +2770,9 @@ We can also remove the repeated $R$:
 
 \begin{questionbox}{$Q3$}
     Complete the definition below and be formally precise:
-    \begin{equation*}
-        \text{A language }L\subseteq\Sigma^\ast\text{ is decidable if and only if}\ldots
-    \end{equation*}
+    \begin{quote}
+        A language $L\subseteq\Sigma^\ast$ is decidable if and only if\ldots
+    \end{quote}
 \end{questionbox}
 
 \bigskip
@@ -2857,31 +2857,31 @@ There are many equivalent definitions. Here are a few:
     \item[$(iii)$]
     \begin{align*}
         q_0&aabbaa\\
-        \sqcup q_1&abbaa\\
-        \sqcup aq_1&bbaa\\
-        \sqcup axq_2&baa\\
-        \sqcup axbq_2&aa\\
-        \sqcup axbxq_3&a\\
-        \sqcup axbxaq_3&\sqcup\\
-        \sqcup axbxq_4&a\\
-        \sqcup axbq_5&xa\\
-        \sqcup axq_5&bxa\\
-        \sqcup aq_5&xbxa\\
-        \sqcup q_5&axbxa\\
-        q_5&\sqcup axbxa\\
-        \sqcup q_6&axbxa\\
-        \sqcup xq_1&xbxa\\
-        \sqcup xxq_1&bxa\\
-        \sqcup xxxq_2&xa\\
-        \sqcup xxxxq_2&a\\
-        \sqcup xxxxxq_3&\sqcup\\
-        \sqcup xxxxq_4&x\\
-        \sqcup xxxq_4&xx\\
-        \sqcup xxq_4&xxx\\
-        \sqcup xq_4&xxxx\\
-        \sqcup q_4&xxxxx\\
-        q_4&\sqcup xxxxx\\
-        q_\text{acc}&\sqcup xxxxx\\
+        {\sqcup}q_1&abbaa\\
+        {\sqcup}aq_1&bbaa\\
+        {\sqcup}axq_2&baa\\
+        {\sqcup}axbq_2&aa\\
+        {\sqcup}axbxq_3&a\\
+        {\sqcup}axbxaq_3&{\sqcup}\\
+        {\sqcup}axbxq_4&a\\
+        {\sqcup}axbq_5&xa\\
+        {\sqcup}axq_5&bxa\\
+        {\sqcup}aq_5&xbxa\\
+        {\sqcup}q_5&axbxa\\
+        q_5&{\sqcup}axbxa\\
+        {\sqcup}q_6&axbxa\\
+        {\sqcup}xq_1&xbxa\\
+        {\sqcup}xxq_1&bxa\\
+        {\sqcup}xxxq_2&xa\\
+        {\sqcup}xxxxq_2&a\\
+        {\sqcup}xxxxxq_3&{\sqcup}\\
+        {\sqcup}xxxxq_4&x\\
+        {\sqcup}xxxq_4&xx\\
+        {\sqcup}xxq_4&xxx\\
+        {\sqcup}xq_4&xxxx\\
+        {\sqcup}q_4&xxxxx\\
+        q_4&{\sqcup}xxxxx\\
+        q_\text{acc}&{\sqcup}xxxxx\\
     \end{align*}
 
     \item[$(iv)$] The machine halted in the accepting state, so $M$ accepts $w$.
@@ -2933,6 +2933,313 @@ By replacing all jumpy transitions, this produces an ordinary Turing machine tha
 
 
 
+
+
+
+
+
+
+
+
+\newpage
+
+\section{Sheet 5}
+
+
+\begin{questionbox}{$Q1$}
+    Is the language $\varnothing$ decidable?
+\end{questionbox}
+
+\bigskip
+
+Yes: it is recognised by the Turing machine that immediately goes into the reject state on start.
+
+
+
+\begin{questionbox}{$Q2$}
+    Is the following statement true?
+    \begin{quote}
+        If $L$ is a decidable language, and $L'\subseteq L$, then $L'$ is also decidable.
+    \end{quote}
+\end{questionbox}
+
+\bigskip
+
+It is not: take $L=\Sigma^\ast$ and $L'=\mathrm{HP}$ (or any other previously-known undecidable language).
+
+
+\begin{questionbox}{$Q3$}
+    Consider the following decision problem:
+    \begin{center}
+        Given a regular expression $R$ over $\Sigma=\{0,1\}$, does it describe a language that contains at least one string starting with 11 and ending with 0?
+    \end{center}
+    \begin{enumerate}
+        \item[$(i)$] Express this problem as a language $RU_{110}$.
+        
+        \item[$(ii)$] Prove that $RU_{110}$. is decidable.
+    \end{enumerate}
+\end{questionbox}
+
+\bigskip
+
+\begin{enumerate}
+    \item[$(i)$]
+    \begin{equation*}
+        RU_{110}=\left\{\langle R\rangle\;\middle|\;\begin{aligned}
+            R\text{ is a regular expression over }\{0,1\}\\
+            \text{and }\exists s\in\Sigma^\ast.\exists w\in L(R).w=11s0
+        \end{aligned}
+        \right\}
+    \end{equation*}
+    
+    \item[$(ii)$] As usual, we will accept the Church--Turing thesis and only give a high-level algorithm for deciding this language:
+    \begin{itemize}
+        \item On input $\langle R\rangle$, convert $R$ into an equivalent DFA $M$;
+        \item From the start state, trace the run of $M$ on the string $11$ and mark the state $s_0$ that is reached;
+        \item From each accepting state, trace a step backwards along a $0$-transition and mark the set of states reached as $T$;
+        \item Accept if there is a path from $s_0$ to some state in $T$, and reject otherwise. This is computable by any standard digraph reachability algorithm (one is described below).
+    \end{itemize}
+
+    \begin{algorithm}[H]
+    \caption{Decide $RU_{110}$}
+    \begin{algorithmic}[1]
+    \Procedure{decide}{$\langle R\rangle$}
+        \State Convert $R$ to an equivalent DFA $M=(Q,\Sigma,q_0,F,\delta)$
+        \State $s_0\gets\delta(\delta(q_0,1),1)$
+        \State$T\gets\{\}$
+        \For{$q\in Q$}
+            \If{$\delta(q,0)\in F$}
+                \State $T.\texttt{append}(q)$
+            \EndIf
+        \EndFor
+
+    \State $\texttt{Visited}\gets \{s_0\}$
+    \State $\texttt{Stack}\gets[s_0]$
+
+    \While{$\texttt{Stack}\neq\varnothing$}
+        \State $q\gets\texttt{Stack}.\texttt{pop}()$
+        \If{$q\in T$}
+            \State \Return accept
+        \EndIf
+        \For{$a\in\Sigma$}
+            \State $q'\gets\delta(q,a)$
+            \If{$q'\notin\texttt{Visited}$}
+                \State $\texttt{Visited}.\texttt{append}(q')$
+                \State $\texttt{Stack}.\texttt{append}(q')$
+            \EndIf
+        \EndFor
+    \EndWhile
+
+    \State \Return reject
+
+    \EndProcedure
+    \end{algorithmic}
+    \end{algorithm}
+\end{enumerate}
+
+
+
+\begin{questionbox}{$Q4$}
+    Prove that the class of decidable languages is closed under:
+    \begin{enumerate}
+        \item[$(i)$] union;
+        
+        \item[$(ii)$] and concatenation.
+    \end{enumerate}
+\end{questionbox}
+
+\bigskip
+
+Let $L_1$ and $L_2$ be decidable languages, with deciders $M_1$ and $M_2$, respectively.
+\begin{enumerate}
+    \item[$(i)$] We construct a decider for $L_1\cup L_2$ as a $2$-tape Turing machine as follows:
+    \begin{enumerate}
+        \item[(1)] On input $x$, copy $x$ to the second tape;
+        \item[(2)] Simulate $M_1$ on the first tape and accept if $M_1$ accepts;
+        \item[(3)] Otherwise simulate $M_2$ on the second tape and accept if $M_2$ accepts, and reject otherwise.
+    \end{enumerate}
+
+    \begin{algorithm}[H]
+    \caption{Decide Union}
+    \begin{algorithmic}[1]
+    \Procedure{decide}{$x$}
+        \State tape 2 $\gets x$
+        \State Simulate $M_1$ on tape 1
+        \If{$M_1$ accepts}
+            \State\Return accept
+        \Else
+            \State Simulate $M_2$ on tape 2
+            \If{$M_2$ accepts}
+                \State\Return accept
+            \Else
+                \State\Return reject
+            \EndIf
+        \EndIf
+    \EndProcedure
+    \end{algorithmic}
+    \end{algorithm}
+
+    (This is using short-circuit evaluation, but any valid disjunction evaluation strategy will work.) This defines a decider since $M_1$ and $M_2$ are deciders and hence the conditionals must terminate.
+
+
+    \item[$(ii)$] We construct a decider for $L_1\circ L_2$ as a $3$-tape Turing machine as follows:
+    \begin{enumerate}
+        \item[(1)] \texttt{Input} $x$;
+        \item[(2)] \texttt{For} $n=0$ \texttt{to} $n=|x|$:
+        \begin{enumerate}
+            \item[(a)] Split $x$ at the $n$th character into two words, i.e. into $y$ and $z$ with $|y|=n$ and $x=yz$, and copy $y$ to the second tape and $z$ to the third;
+            \item[(b)] Simulate $M_1$ on the second tape;
+            \item[(c)] If it rejects, \texttt{continue} (increment $n$ and repeat);
+            \item[(d)] Otherwise, simulate $M_2$ on the third tape, and accept if it accepts;
+            \item[(e)] If it instead rejects, \texttt{continue}.
+        \end{enumerate}
+        \item Reject after all splits have been tested and rejected.
+    \end{enumerate}
+
+    \begin{algorithm}[H]
+    \caption{Decide concatenation}
+    \begin{algorithmic}[1]
+    \Procedure{decide}{$x$}
+        \For{$i = 0$ to $|x|$}
+            \State Split $x$ at the $n$th character into $y,z$
+            \State tape 2 $\gets y$
+            \State tape 3 $\gets z$
+
+            \State Simulate $M_1$ on tape $2$
+            \If{$M_1$ rejects}
+                \State \textbf{continue}
+            \Else
+                \State Simulate $M_2$ on tape $3$
+                \If{$M_2$ accepts}
+                    \State \Return accept
+                \EndIf
+            \EndIf
+        \EndFor
+        \State \Return reject
+    \EndProcedure
+    \end{algorithmic}
+    \end{algorithm}
+    Alternatively, we could also use non-determinism to split $x$ rather than looping over all possible splits.
+\end{enumerate}
+
+
+
+
+
+
+
+\begin{questionbox}{$Q5$}
+    Which of the following languages are decidable?
+    \begin{enumerate}
+        \item[$(i)$] $L_1=\bigl\{\langle A,B\rangle\mid A,B\text{ are DFA and }L(A)\cap L(B)=\varnothing\bigr\}$;
+        
+        \item[$(ii)$] $L_2=\bigl\{\langle M\rangle\mid M\text{ is a Turing machine and }M\text{ contains more than 5 states}\bigr\}$;
+        
+        \item[$(iii)$] $L_3=\bigl\{\langle M,w\rangle\mid M\text{ is a Turing machine and }M\text{ accepts }w\text{ in fewer than }1000\text{ steps}\bigr\}$;
+        
+        \item[$(iv)$] $L_4=\bigl\{\langle M,w\rangle\mid M\text{ is a Turing machine and }M\text{ accepts }w\text{ in a finite number of steps}\bigr\}$.
+    \end{enumerate}
+\end{questionbox}
+
+\bigskip
+
+\begin{enumerate}
+    \item[$(i)$] $L_1$ is decidable. On input $\langle A,B\rangle$, we can compute the DFA $C$ that recognises $L(A)\cap L(B)$, and the non-emptiness of regular languages is decidable.
+    
+    % \begin{algorithm}[H]
+    % \caption{Decide $E_{\text{DFA}}^\cap$}
+    % \begin{algorithmic}[1]
+    % \Procedure{decide}{$\langle A,B\rangle$}
+    %     \State Compute the DFA $C$ that recognises $L(A)\cap L(B)$
+    %     \State\Return\Call{$E_{\text{DFA}}$}{$\langle C\rangle$}
+    % \EndProcedure
+    % \end{algorithmic}
+    % \end{algorithm}
+    
+    \item[$(ii)$] $L_2$ is decidable. On input $\langle M\rangle$, enumerate the states of $M$, accepting once $6$ states are counted and rejecting if the count terminates before then.
+
+    \item[$(iii)$] $L_3$ is decidable. On input $\langle M,w\rangle$, simulate the run of $M$ on $w$ for $1000$ steps, returning whatever $M$ returns. If $1000$ steps have been simulated and $M$ has not terminated, reject.
+
+    \item[$(iv)$] $L_4=A_{\text{TM}}$ and is not decidable.
+\end{enumerate}
+
+
+
+
+
+
+\begin{questionbox}{$Q6$}
+    Consider the following decision problem:
+
+    \begin{quote}
+        Given a Turing machine $M$, are there exactly $n$ distinct input strings that $M$ will accept?
+    \end{quote}
+    \begin{enumerate}
+        \item[$(i)$] Express this problem as a set of languages $L_n$ parametrised by $n$.
+        
+        \item[$(ii)$] Prove by a reduction that $L_n$ is undecidable.
+    \end{enumerate}
+\end{questionbox}
+
+\bigskip
+
+\begin{enumerate}
+    \item[$(i)$] $L_n=\bigl\{\langle M\rangle\mathrel{\big|}M\text{ is a Turing machine and there exist exactly }n\text{ distinct strings that }M\text{ accepts}\bigr\}$
+    
+    \item[$(ii)$] Let $S=\{s_1,\ldots,s_n\}$ be a set of $n$ distinct strings. We give a decider for $\text{A}_\text{TM}$.
+    \begin{enumerate}
+        \item[(1)] Input $\langle M,w\rangle$.
+        \item[(2)] Construct a new Turing machine $M'$ as follows:
+        \begin{itemize}
+            \item[(a)] Input $x$.
+            \item[(b)] If $x\in S$, accept.
+            \item[(c)] Otherwise, simulate $M$ on $w$ and accept if it accepts.
+        \end{itemize}
+        \item[(3)] Call the $L_n$ oracle on $M'$ and return the opposite.
+    \end{enumerate}
+    If $\langle M,w\rangle\notin\text{A}_\text{TM}$, then $M$ does not accept $w$, so $M'$ accepts exactly the $n$ strings in $S$, and $\langle M'\rangle\in L_n$; and conversely, if $\langle M,w\rangle\in\text{A}_\text{TM}$, then $M$ accepts $w$, so $M'$ accepts every string, and $M'\notin L_n$.
+    
+    So $\langle M'\rangle\in L_n\longleftrightarrow\langle M,w\rangle\notin\text{A}_\text{TM}$, and hence $\overline{\text{A}_\text{TM}}\leq_m L_n$, so any oracle for $L_n$ is also a decider for $\text{A}_\text{TM}$.
+\end{enumerate}
+
+
+
+
+\begin{questionbox}{$Q7$}
+    Let $S$ be a language over the alphabet $\Sigma$ with $S\neq\Sigma^\ast$ and $S\neq\varnothing$. Prove that if $L$ is any decidable language, then $L\leq_m S$.
+\end{questionbox}
+
+\bigskip
+
+Recall that a mapping reduction from a language $A$ over $\Sigma$ to a language $B$ over $\Gamma$ is a function $f:\Sigma^\ast\rightarrow\Gamma^\ast$ that is:
+\begin{itemize}
+    \item computable;
+    \item and faithful: $w\in A$ if and only if $f(w)\in B$;
+\end{itemize}
+and we write $A\leq_m B$ if such a function exists.
+
+\bigskip
+
+Since $S$ is a proper subset of $\Sigma^\ast$, there exists a string $t\in\Sigma^\ast\setminus S$; and since $S$ is non-empty, there exists a string $s\in S$. Define a function by:
+\begin{equation*}
+    f(x)\coloneqq\begin{cases}
+        s&x\in L\\
+        t&x\notin L
+    \end{cases}
+\end{equation*}
+This function is faithful by construction and is computable since $L$ is decidable, and hence defines a mapping reduction from $L$ to $S$.
+
+\begin{questionbox}{$Q8$}
+    Prove that if $A$ is recognisable, then $A\leq_m\text{A}_\text{TM}$.
+\end{questionbox}
+
+\bigskip
+
+Suppose $A$ is recognised by $M$. Define a function $f:A\rightarrow\text{A}_\text{TM}$ by
+\begin{equation*}
+    f(x)\coloneqq\langle M,x\rangle
+\end{equation*}
+This function is computable since it simply concatenates the code of $M$ with the string $x$, and is faithful since $x\in A$ if and only if $M$ accepts $x$ if and only if $f(x)=\langle M,x\rangle\in\text{A}_\text{TM}$.
 
 
 
