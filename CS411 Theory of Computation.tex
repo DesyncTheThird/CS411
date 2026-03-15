@@ -2965,7 +2965,7 @@ Yes: it is recognised by the Turing machine that immediately goes into the rejec
 
 \bigskip
 
-It is not: take $L=\Sigma^\ast$ and $L'=\mathrm{HP}$ (or any other previously-known undecidable language).
+It is not: take $L=\Sigma^\ast$ and $L'=\text{HP}$ (or any other previously-known undecidable language).
 
 
 \begin{questionbox}{$Q3$}
@@ -2985,10 +2985,10 @@ It is not: take $L=\Sigma^\ast$ and $L'=\mathrm{HP}$ (or any other previously-kn
 \begin{enumerate}
     \item[$(i)$]
     \begin{equation*}
-        RU_{110}=\left\{\langle R\rangle\;\middle|\;\begin{aligned}
+        RU_{110}=\left\{\langle R\rangle\;\middle|\;\begin{gathered}
             R\text{ is a regular expression over }\{0,1\}\\
             \text{and }\exists s\in\Sigma^\ast.\exists w\in L(R).w=11s0
-        \end{aligned}
+        \end{gathered}
         \right\}
     \end{equation*}
     
@@ -3119,6 +3119,7 @@ Let $L_1$ and $L_2$ be decidable languages, with deciders $M_1$ and $M_2$, respe
     \EndProcedure
     \end{algorithmic}
     \end{algorithm}
+
     Alternatively, we could also use non-determinism to split $x$ rather than looping over all possible splits.
 \end{enumerate}
 
@@ -3147,11 +3148,11 @@ Let $L_1$ and $L_2$ be decidable languages, with deciders $M_1$ and $M_2$, respe
     \item[$(i)$] $L_1$ is decidable. On input $\langle A,B\rangle$, we can compute the DFA $C$ that recognises $L(A)\cap L(B)$, and the non-emptiness of regular languages is decidable.
     
     % \begin{algorithm}[H]
-    % \caption{Decide $E_{\text{DFA}}^\cap$}
+    % \caption{Decide $\text{E}_{\text{DFA}}^\cap$}
     % \begin{algorithmic}[1]
     % \Procedure{decide}{$\langle A,B\rangle$}
     %     \State Compute the DFA $C$ that recognises $L(A)\cap L(B)$
-    %     \State\Return\Call{$E_{\text{DFA}}$}{$\langle C\rangle$}
+    %     \State\Return\Call{$\text{E}_{\text{DFA}}$}{$\langle C\rangle$}
     % \EndProcedure
     % \end{algorithmic}
     % \end{algorithm}
@@ -3199,7 +3200,7 @@ Let $L_1$ and $L_2$ be decidable languages, with deciders $M_1$ and $M_2$, respe
     \end{enumerate}
     If $\langle M,w\rangle\notin\text{A}_\text{TM}$, then $M$ does not accept $w$, so $M'$ accepts exactly the $n$ strings in $S$, and $\langle M'\rangle\in L_n$; and conversely, if $\langle M,w\rangle\in\text{A}_\text{TM}$, then $M$ accepts $w$, so $M'$ accepts every string, and $M'\notin L_n$.
     
-    So $\langle M'\rangle\in L_n\longleftrightarrow\langle M,w\rangle\notin\text{A}_\text{TM}$, and hence $\overline{\text{A}_\text{TM}}\leq_m L_n$, so any oracle for $L_n$ is also a decider for $\text{A}_\text{TM}$.
+    So $\langle M'\rangle\in L_n\Longleftrightarrow\langle M,w\rangle\notin\text{A}_\text{TM}$, and hence $\overline{\text{A}_\text{TM}}\leq_m L_n$, so any oracle for $L_n$ is also a decider for $\text{A}_\text{TM}$.
 \end{enumerate}
 
 
@@ -3242,8 +3243,10 @@ Suppose $A$ is recognised by $M$. Define a function $f:A\rightarrow\text{A}_\tex
 This function is computable since it simply concatenates the code of $M$ with the string $x$, and is faithful since $x\in A$ if and only if $M$ accepts $x$ if and only if $f(x)=\langle M,x\rangle\in\text{A}_\text{TM}$.
 
 
-\begin{questionbox}{$Q8$}
-    Is there a decider which can decide whether a given Turing machine $M$:
+\begin{questionbox}{$Q9$}
+    Are the following problems decidable?
+    
+    Determine whether a given Turing machine $M$:
     \begin{enumerate}
         \item[$(i)$] takes more than $847$ steps on the input $\varepsilon$?
         
@@ -3268,7 +3271,7 @@ This function is computable since it simply concatenates the code of $M$ with th
 
     \item[$(ii)$] Yes. Simulate the run of $M$ on all possible inputs of length $847$ for $847$ steps, or until $M$ halts, whichever happens earlier. Accept if any string doesn't halt in the first $847$ steps.
     
-    There are $\Sigma_{n=0}^k|\Sigma|^n=(|\Sigma|^{848}-1)/(|\Sigma|-1)$ such inputs, which is finite, so this program terminates. It is also sufficient to only check these inputs, since if $M$ runs for $847$ steps on a word $w$ of length greater than $847$, then $M$ also runs for at least $847$ steps when the input is only the first $847$ symbols of $w$, since $M$ can only possibly access the first $847$ symbols of $w$, in $847$ steps.
+    There are $\Sigma_{n=0}^{847}|\Sigma|^n=(|\Sigma|^{848}-1)/(|\Sigma|-1)$ such inputs, which is finite, so this program terminates. It is also sufficient to only check these inputs, since if $M$ runs for $847$ steps on a word $w$ of length greater than $847$, then $M$ also runs for at least $847$ steps when the input is only the first $847$ symbols of $w$, since $M$ can only possibly access the first $847$ symbols of $w$, in $847$ steps.
 
     \item[$(iii)$] Yes. The program for the previous case also decides this problem, accepting if all strings don't halt in the first $847$ steps.
 
@@ -3284,6 +3287,363 @@ This function is computable since it simply concatenates the code of $M$ with th
     
     \item[$(vi)$] Yes. The previous program mutatis mutandis also works here.
 \end{enumerate}
+
+
+
+
+
+\newpage
+
+\section{Sheet 6}
+
+
+\begin{questionbox}{$Q1$}
+    Which of the following statements are true?
+    \begin{enumerate}
+        \item[$(i)$] $3n^2+2n+7\in O(n^2)$;
+        
+        \item[$(ii)$] $3^n\in2^{O(n)}$;
+    
+        \item[$(iii)$] $n\in o(2n)$.
+    \end{enumerate}
+\end{questionbox}
+
+\bigskip
+
+Recall that:
+\begin{itemize}
+    \item $f\in O(g)$ if there exists $c>0$ such that for all $n$, $|f(n)|\leq cg(n)$
+    
+    \item $f\in o(g)$ if for all $c>0$, there exists $N$ such that for all $n>N$, $|f(n)|\leq cg(n)$.
+\end{itemize}
+
+These definitions are very similar to those of limits, so we can also characterise these asymptotic complexity classes using limits as follows.
+
+Let $f,g:D\rightarrow\mathbb{R}$ be functions defined on an unbounded domain $D$ (usually $D=\mathbb{N}$ or $D=\mathbb{R}_{\geq0}$) and suppose that $g$ is eventually positive. Consider the quantity
+\begin{equation*}
+    L=\lim_{n\rightarrow\infty}\frac{f(n)}{g(n)}
+\end{equation*}
+
+\begin{itemize}
+    \item If $L=0$, then $f\in o(g)$ (in particular, $f\in O(g)$);
+    \item If $L<\infty$, then $f\in O(g)$;
+    \item If $L=\infty$, then $f\in\omega(g)$ (in particular, $f\in\Omega(g)$);
+    \item If $L>0$, then $f\in\Omega(g)$;
+    \item If $L\in(0,\infty)$, then $f\in\Theta(g)$.
+\end{itemize}
+Note that these conditions are sufficient and not necessary (specifically, $L$ may fail to converge but $f$ and $g$ may still satisfy an asymptotic relation). However, these still serve as an easy check to compute.
+
+The exact conditions are as follows:
+\begin{equation*}
+    L=\limsup_{x\rightarrow\infty}\frac{f(x)}{g(x)}\qquad\text{and}\qquad\ell=\liminf_{x\rightarrow\infty}\frac{f(x)}{g(x)}
+\end{equation*}
+\begin{itemize}
+    \item $L=0$ if and only if $f\in o(g)$;
+    \item $L<\infty$ if and only if $f\in O(g)$;
+    \item $\ell=\infty$ if and only if $f\in\omega(g)$;
+    \item $\ell>0$ if and only if $f\in\Omega(g)$;
+    \item $\ell>0$ and $L<\infty$ if and only if $f\in\Theta(g)$.
+\end{itemize}
+
+\begin{enumerate}
+    \item[$(i)$] True:
+    \begin{align*}
+        3n^2+2n+7&\leq3n^2+2n^2+7n^2\\
+        &=12n^2
+    \end{align*}
+    so $c=12$ suffices.
+    
+    Alternatively, using the limit definition:
+    \begin{align*}
+        \lim_{n\rightarrow\infty}\frac{3n^2+2n+7}{n^2}&=\lim_{n\rightarrow\infty}\frac{3n^2}{n^2}+\frac{2n}{n^2}+\frac{7}{n^2}\\
+        &=\lim_{n\rightarrow\infty}3+\frac{2}{n}+\frac{7}{n^2}\\
+        &=3\\
+        &<\infty
+    \end{align*}
+    
+    \item[$(ii)$] True. The bases of exponentials don't matter for big-$O$ since they can always be transformed into a multiplicative constant in the exponent:
+    \begin{align*}
+        3^n&=2^{\log_2(3^n)}\\
+        &=2^{\log_2(3)n}\\
+    \end{align*}
+    so $c=\log_2(3)$ suffices.
+
+    Alternatively, using the limit definition:
+    \begin{align*}
+        \lim_{n\rightarrow\infty}\frac{3^n}{2^{cn}}&=\lim_{n\rightarrow\infty}\left(\frac{3}{2^c}\right)^n\\
+    \end{align*}
+    This geometric limit converges if and only if $\frac{3}{2^c}\leq1$, or equivalently, $3\leq2^c$, so any $\log_2(3)\leq c$ suffices.
+
+    \item[$(iii)$] False. Choose $c=\frac{1}{4}$, and for any $N$, choose $n=N+1$. Then:
+    \begin{align*}
+        |n|&>\frac{n}{2}\\
+        &=\frac{1}{4}\cdot 2n\\
+    \end{align*}
+    So the condition fails for this choice of $c$, and hence $n\notin o(2n)$. (Any $c<\frac{1}{2}$ works as a counterexample.)
+
+    Alternatively, using the limit definition:
+    \begin{align*}
+        \lim_{n\rightarrow\infty}\frac{n}{2n}&=\lim_{n\rightarrow\infty}\frac{1}{2}\\
+        &=\frac{1}{2}\\
+        &\neq0
+    \end{align*}
+\end{enumerate}
+
+\begin{questionbox}{Q2}
+    Let $M$ be a $5$-tape Turing machine running in $O(n^3)$ time. What is the time complexity of a single-tape Turing machine simulating $M$?
+\end{questionbox}
+
+\bigskip
+
+$O(n^6)$.
+
+Given a $k$-tape Turing machine $M$, we can simulate it on a single-tape Turing machine $S$ as follows:
+\begin{itemize}
+    \item Interlace the $k$-tapes together onto a single tape:
+    \begin{center}
+        \begin{tikzpicture}[scale=0.75]
+            \foreach \j in {1,...,5} {
+                \ifnum\j=4
+                    \draw node at (8.5, 0.6-1.5*\j) {$\vdots$};
+                \else
+                    \ifnum\j=5
+                        \begin{scope}[shift={(0,-1.5*\j)}]
+                            \draw (0,0) grid (17,1);
+                            \draw (0.5,0.5) node {$\vdash$};
+                            \foreach \i in {1,...,15} {
+                                \draw (\i+0.5,0.5) node {$a_k^{\i}$};
+                            }
+                            \draw (16.55,0.5) node {$\cdots$};
+                        \end{scope}
+                    \else 
+                        \begin{scope}[shift={(0,-1.5*\j)}]
+                            \draw (0,0) grid (17,1);
+                            \draw (0.5,0.5) node {$\vdash$};
+                            \foreach \i in {1,...,15} {
+                                \draw (\i+0.5,0.5) node {$a_{\j}^{\i}$};
+                            }
+                            \draw (16.55,0.5) node {$\cdots$};
+                        \end{scope}
+                    \fi
+                \fi
+                
+                % \draw (-0.5,-2.5) node {$M$};
+            }
+            
+            \draw[thick,decorate,decoration={brace,mirror,amplitude=0.2cm,raise=0.1cm}]
+                    (0,-0.5) -- (0,-7.5) node[pos=0.5,anchor=east,xshift=-0.25cm] {$M$};
+
+            \draw[->,decorate,decoration={snake,amplitude=1pt,segment length=3pt}]
+                (8.5,-8.5) -- (8.5,-9.5);
+
+            \begin{scope}[shift={(0,-11.5)}]
+                \draw (0,0) grid (17,1);
+                \draw (0.5,0.5) node {$\vdash$};
+                
+                \draw (-0.5,0.5) node {$S$};
+                
+                \draw[thick,decorate,decoration={brace,mirror,amplitude=0.2cm,raise=0.1cm}]
+                    (1,0) -- (6,0) node[pos=0.5,anchor=north,yshift=-0.25cm] {First cells};
+                \draw (1.5,0.5) node {$a_{1}^{1}$};
+                \draw (2.5,0.5) node {$a_{2}^{1}$};
+                \draw (3.5,0.5) node {$a_{3}^{1}$};
+                \draw (4.55,0.5) node {$\cdots$};
+                \draw (5.5,0.5) node {$a_{k}^{1}$};
+                
+                \draw[thick,decorate,decoration={brace,mirror,amplitude=0.2cm,raise=0.1cm}]
+                    (6,0) -- (11,0) node[pos=0.5,anchor=north,yshift=-0.25cm] {Second cells};
+                \draw (6.5,0.5) node {$a_{1}^{2}$};
+                \draw (7.5,0.5) node {$a_{2}^{2}$};
+                \draw (8.5,0.5) node {$a_{3}^{2}$};
+                \draw (9.55,0.5) node {$\cdots$};
+                \draw (10.5,0.5) node {$a_{k}^{2}$};
+                
+                \draw[thick,decorate,decoration={brace,mirror,amplitude=0.2cm,raise=0.1cm}]
+                    (11,0) -- (16,0) node[pos=0.5,anchor=north,yshift=-0.25cm] {Third cells};
+                \draw (11.5,0.5) node {$a_{1}^{3}$};
+                \draw (12.5,0.5) node {$a_{2}^{3}$};
+                \draw (13.5,0.5) node {$a_{3}^{3}$};
+                \draw (14.55,0.5) node {$\cdots$};
+                \draw (15.5,0.5) node {$a_{k}^{3}$};
+                
+                \draw (16.55,0.5) node {$\cdots$};
+            \end{scope}
+        \end{tikzpicture}
+    \end{center}
+    The position of the head of each individual tape can then be recorded with an extended alphabet $\hat\Gamma=\Gamma\cup\dot\Gamma$, where a dotted symbol $\dot{a}$ represents the presence of a virtual head.
+
+    The state space of $S$ is then $Q\times\hat\Gamma^k\times\{\text{read},\text{write}\}$, corresponding to tracking the state of $M$, the tuple of symbols currently read by the virtual heads, and a flag for reading and writing phases (see next step).
+
+    \item Suppose $M$ has run for $n$ steps and the heads are at positions $p_1,\ldots,p_k\leq n$. The \textit{active region} of $S$'s tape then consists of the first $\max_ip_i$ blocks, which is of length at most $kn+k\in O(kn)$. $S$ can then simulate the next step of $M$ in two passes over the active region as follows:
+    \begin{itemize}
+        \item Read: $S$ scans across the active region, collecting the $k$ dotted symbols $\dot{a}_i$ corresponding to the $p_i$ positions of the virtual heads into its internal state.
+        
+        \item Write: Using the collected tuple and the encoded current state of $M$, $S$ can scan across the active region again, simulating the transitions of $M$ on each block.
+    \end{itemize}
+    After the second pass, $S$ updates its internal encoding of $M$'s state.
+\end{itemize}
+
+After $n$ steps of $M$, each head has moved at most $n$ cells, so the active region of $S$ is $O(kn)$ in length, and each step of $M$ takes $O(kn)$ steps of $S$. So, if $M$ halts in $T(n)$ steps, then $S$ halts in
+\begin{align*}
+    \sum_{t=0}^{T(n)}O(kt)&=O(k)\sum_{t=1}^{T(n)}t\\
+    &=O\left(k\cdot\frac{T(n)\bigl(T(n)+1\bigr)}{2}\right)\\
+    &=O\bigl(k\cdot T(n)^2\bigr)
+\end{align*}
+Since the number of tapes $k$ is a constant, this is $O\bigl(T(n)^2\bigr)$.
+
+
+
+
+
+\begin{questionbox}{Q3}
+    Let $\text{ALL}_\text{DFA}=\bigl\{\langle A\rangle\mid A\text{ is a DFA and }L(M)=\Sigma^\ast\bigr\}$. Show that $\text{ALL}_\text{DFA}$ is decidable.
+\end{questionbox}
+
+\bigskip
+
+Given an input $\langle A\rangle$, mark the initial state of $A$, and then repeatedly mark states reachable from currently marked states until no more transitions are available. If there exists at least one marked state that is not accepting, then reject. Otherwise accept.
+
+Alternatively, compute $\bigl\langle\overline{A}\bigr\rangle$, where $L(\overline{A})=\Sigma^\ast\setminus L(A)$. Since $\text{E}_\text{DFA}$ is decidable, calling its decider on $\bigl\langle\overline{A}\bigr\rangle$ decides $\text{ALL}_\text{DFA}$.
+
+
+
+\begin{questionbox}{Q4}
+    Let $\text{E}_\text{CFG}^n=\bigl\{\langle G\rangle\mid hg\text{ is a CFG and derives some word }x\text{ in at most }n\text{ steps}.\bigr\}$. Show that $\text{E}_\text{CFG}^n$ is decidable.
+\end{questionbox}
+
+\bigskip
+
+Given a CFG $G$, recursively define its \textit{reachability stages} $\mathcal{R}_i$ as follows:
+\begin{align*}
+    \mathcal{R}_0&=\{S\}\\
+    \mathcal{R}_{i+1}&=\mathcal{R}_i\cup\{\beta\mid\exists\alpha\in\mathcal{R}_i.\alpha\Rightarrow_G\beta\}
+\end{align*}
+That is, $\mathcal{R}_i$ contains the sentential states reachable in a most $i$ productions.
+
+To decide $\text{E}_\text{CFG}^n$, compute $\mathcal{R}_n$ and check if it contains any strings consisting only of terminal symbols. If it does, accept; otherwise reject.
+
+This is computable since grammars can only have finitely-many productions, so the $\mathcal{R}_i$ are all finite and computable.
+
+
+
+
+
+\begin{questionbox}{Q5}
+    Consider the following decision problem:
+    \begin{equation*}
+        \text{Sub}=\bigl\{\langle N,x\rangle\mid N\text{ is an NFA and }x\text{ is a substring of some }y\in L(N)\bigr\}
+    \end{equation*}
+    Prove that $\text{Sub}$ is decidable using the decidability of $\text{E}_\text{DFA}$.
+\end{questionbox}
+
+\bigskip
+
+$x$ is a substring of $y$ if and only if $\exists y_1,y_2\in\Sigma^\ast.y_1xy_2\in L(N)$, so define the language
+\begin{equation*}
+    \Sigma^\ast x\Sigma^\ast=\{y_1xy_2\mid y_1,y_2\in\Sigma^\ast\}
+\end{equation*}
+Then, $\langle N,x\rangle\in\text{Sub}$ if and only if $L(N)\cap\Sigma^\ast x\Sigma^\ast\neq\varnothing$.
+
+$\Sigma^\ast x\Sigma^\ast$ is regular as the concatenation of three regular languages and regularity is preserved under concatenation, so the non-emptiness of $L(N)\cap\Sigma^\ast x\Sigma^\ast$ is decidable as an instance of $\text{E}_\text{DFA}$.
+
+
+
+
+
+
+
+
+
+
+\begin{questionbox}{Q6}
+    Prove that the following language is decidable:
+    \begin{equation*}
+        L_{\lnot000}=\left\{\langle R\rangle\;\middle|\;\begin{gathered}
+            R\text{ is a regular expression over }\{0,1\}\text{ and }\\
+            L(R)\text{ does not contain any string with }000\text{ as a substring}
+        \end{gathered}
+        \right\}
+    \end{equation*}
+\end{questionbox}
+
+\bigskip
+
+$x$ contains $000$ as a substring if and only if $\exists y_1,y_2\in\Sigma^\ast.y_1000y_2=x$. So $L(R)$ not containing any such strings is equivalent to $L(R)\cap\Sigma^\ast000\Sigma^\ast=\varnothing$, which is decidable as an instance of $\text{E}_\text{DFA}$.
+
+Alternatively, convert $R$ into a DFA $A$ recognising the same language. Then, enumerate all $3$-paths in $A$ and check if any of them consist of three $0$ transitions in a row. This is computable as a DFA is finite and hence there are only finitely many $3$-paths to check.
+
+
+
+
+
+
+
+\begin{questionbox}{Q7}
+    Prove that the following language is undecidable:
+    \begin{equation*}
+        \text{EPSILON}_\text{TM}=\bigl\{\langle M\rangle\mid R\text{ is a Turing machine and }\varepsilon\in L(M)\bigr\}
+    \end{equation*}
+\end{questionbox}
+
+\bigskip
+
+We give a decider for $\text{A}_\text{TM}$ assuming an $\text{EPSILON}_\text{TM}$ oracle.
+\begin{itemize}
+    \item[(1)] Input $\langle M,w\rangle$.
+    \item[(2)] Construct a new Turing machine $M'$ as follows:
+    \begin{itemize}
+        \item Input $x$.
+        \item Simulate $M$ on $w$.
+    \end{itemize}
+    \item[(3)] Call the $\text{EPSILON}_\text{TM}$ oracle on $M'$ and return what it returns.
+\end{itemize}
+If $\langle M,w\rangle\notin\text{A}_\text{TM}$, then $M'$ either loops or rejects on every input and $M'\in\text{EPSILON}_\text{TM}$; conversely, if $\langle M,w\rangle\in\text{A}_\text{TM}$, then $M'$ accepts every input and $M'\notin\text{EPSILON}_\text{TM}$.
+
+So $\langle M'\rangle\in\text{EPSILON}_\text{TM}\Longleftrightarrow\langle M,w\rangle\in\text{A}_\text{TM}$ and hence any oracle for $\text{EPSILON}_\text{TM}$ is also a decider for $\text{A}_\text{TM}$.
+
+
+
+
+
+\begin{questionbox}{Q8}
+    Is the following language decidable?
+    \begin{equation*}
+        L=\bigl\{\langle R_1,R_2\rangle\mid R_1,R_2\text{ are regular expressions and }L(R_1^\ast)=L(R_2)\bigr\}
+    \end{equation*}
+\end{questionbox}
+
+\bigskip
+
+Yes. Since regularity is preserved under Kleene star, $L(R_1^\ast)=L(R_2)$ is just checking equality of regular languages, which is decidable as follows:
+
+Given regular languages $A$ and $B$, construct their symmetric difference $C=A\triangle B=(A\setminus B)\cup(B\setminus A)$. Then $C=\varnothing$ if and only if $A=B$, and the emptiness problem for regular languages, i.e. $\text{E}_\text{DFA}$, is decidable.
+
+
+\begin{questionbox}{Q9}
+    Is the following language decidable?
+    \begin{equation*}
+        L=\bigl\{\langle M\rangle\mid M\text{ accepts at least one }x\text{ in fewer than }|x|\text{ steps}\bigr\}
+    \end{equation*}
+\end{questionbox}
+
+\bigskip
+
+No. We give a decider for $\text{A}_\text{TM}$ assuming an $L$ oracle.
+\begin{itemize}
+    \item[(1)] Input $\langle M,w\rangle$.
+    \item[(2)] Construct a new Turing machine $M'$ as follows:
+    \begin{itemize}
+        \item Input $x$.
+        \item Simulate $M$ on $w$.
+    \end{itemize}
+    \item[(3)] Call the $L$ oracle on $M'$ and return what it returns.
+\end{itemize}
+If $\langle M,w\rangle\notin\text{A}_\text{TM}$, then $M'$ rejects or loops on every input and $M'\notin L$.
+
+Conversely, suppose $\langle M,w\rangle\in\text{A}_\text{TM}$, with $M$ accepting $w$ in $k$ steps, so on input $x$, $M'$ also accepts $x$ in $k$ steps. If $k<|x|$, then we are done. Otherwise, let $y$ be any word with length longer than $k$. Since $M'$ ignores its input, it also accepts $y$ in $k$ steps, but $k<|y|$, so $M'\in L$.
+
+So $\langle M'\rangle\in L\Longleftrightarrow\langle M,w\rangle\in\text{A}_\text{TM}$ and hence any oracle for $L$ is also a decider for $\text{A}_\text{TM}$.
+
 
 
 
