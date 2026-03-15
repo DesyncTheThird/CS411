@@ -3242,5 +3242,53 @@ Suppose $A$ is recognised by $M$. Define a function $f:A\rightarrow\text{A}_\tex
 This function is computable since it simply concatenates the code of $M$ with the string $x$, and is faithful since $x\in A$ if and only if $M$ accepts $x$ if and only if $f(x)=\langle M,x\rangle\in\text{A}_\text{TM}$.
 
 
+\begin{questionbox}{$Q8$}
+    Is there a decider which can decide whether a given Turing machine $M$:
+    \begin{enumerate}
+        \item[$(i)$] takes more than $847$ steps on the input $\varepsilon$?
+        
+        \item[$(i)$] takes more than $847$ steps on the input $\varepsilon$?
+        
+        \item[$(ii)$] takes more than $847$ steps on \textit{some} input?
+    
+        \item[$(iii)$] takes more than $847$ steps on \textit{all} inputs?
+    
+        \item[$(iv)$] ever moves the read/write head more than $847$ tape cells away from the left end-marker on input $\varepsilon$?
+        
+        \item[$(v)$] ever moves the read/write head more than $847$ tape cells away from the left end-marker on \textit{some} $\varepsilon$?
+        
+        \item[$(vi)$] ever moves the read/write head more than $847$ tape cells away from the left end-marker on \textit{some} $\varepsilon$?
+    \end{enumerate}
+\end{questionbox}
+
+\bigskip
+
+\begin{enumerate}
+    \item[$(i)$] Yes. Simulate the run of $M$ on $\varepsilon$ for $847$ steps, or until $M$ halts, whichever happens first. If $M$ halts before $847$ steps, reject. Otherwise accept. As the number of steps is bounded and fixed, this will always halt, so this describes a decider.
+
+    \item[$(ii)$] Yes. Simulate the run of $M$ on all possible inputs of length $847$ for $847$ steps, or until $M$ halts, whichever happens earlier. Accept if any string doesn't halt in the first $847$ steps.
+    
+    There are $\Sigma_{n=0}^k|\Sigma|^n=(|\Sigma|^{848}-1)/(|\Sigma|-1)$ such inputs, which is finite, so this program terminates. It is also sufficient to only check these inputs, since if $M$ runs for $847$ steps on a word $w$ of length greater than $847$, then $M$ also runs for at least $847$ steps when the input is only the first $847$ symbols of $w$, since $M$ can only possibly access the first $847$ symbols of $w$, in $847$ steps.
+
+    \item[$(iii)$] Yes. The program for the previous case also decides this problem, accepting if all strings don't halt in the first $847$ steps.
+
+    \item[$(iv)$] Yes. If the read/write head never goes past the $847$th cell, then there are only finitely-many possible configurations that $M$ could be in, since a Turing machine only has finitely many states and tape symbols. Specifically, there are
+    \begin{equation*}
+        C=847\cdot|Q|\cdot|\Gamma|^{847}
+    \end{equation*}
+    possible total configurations since there are $847$ positions the head can be in; $|Q|$-many internal states; and $|\Gamma|^{847}$ possible tape configurations. Once this number of steps has been exceeded, then by the pigeonhole principle, we must have repeated a configuration.
+    
+    So, simulate the run of $M$ on $\varepsilon$ for $C+1$ steps, or until it halts, whicever happens earlier. If $M$ ever moves the read/write head past the $847$th cell, accept $M$; otherwise reject.
+
+    \item[$(v)$] Yes. Enumerate all strings of length at most $847$ and run the previous program on them, accepting if any string moves the read/write head past the $847$th cell, and rejecting otherwise.
+    
+    \item[$(vi)$] Yes. The previous program mutatis mutandis also works here.
+\end{enumerate}
+
+
+
+
+
+
 
 \end{document}
