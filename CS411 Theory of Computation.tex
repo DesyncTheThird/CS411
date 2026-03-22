@@ -3084,7 +3084,7 @@ Let $L_1$ and $L_2$ be decidable languages, with deciders $M_1$ and $M_2$, respe
 
     \item[$(ii)$] We construct a decider for $L_1\circ L_2$ as a $3$-tape Turing machine as follows:
     \begin{enumerate}
-        \item[(1)] \texttt{Input} $x$;
+        \item[(1)] Input $x$;
         \item[(2)] \texttt{For} $n=0$ \texttt{to} $n=|x|$:
         \begin{enumerate}
             \item[(a)] Split $x$ at the $n$th character into two words, i.e. into $y$ and $z$ with $|y|=n$ and $x=yz$, and copy $y$ to the second tape and $z$ to the third;
@@ -3161,7 +3161,7 @@ Let $L_1$ and $L_2$ be decidable languages, with deciders $M_1$ and $M_2$, respe
 
     \item[$(iii)$] $L_3$ is decidable. On input $\langle M,w\rangle$, simulate the run of $M$ on $w$ for $1000$ steps, returning whatever $M$ returns. If $1000$ steps have been simulated and $M$ has not terminated, reject.
 
-    \item[$(iv)$] $L_4=A_{\text{TM}}$ and is not decidable.
+    \item[$(iv)$] $L_4=\text{A}_{\text{TM}}$ and is not decidable.
 \end{enumerate}
 
 
@@ -3643,6 +3643,370 @@ If $\langle M,w\rangle\notin\text{A}_\text{TM}$, then $M'$ rejects or loops on e
 Conversely, suppose $\langle M,w\rangle\in\text{A}_\text{TM}$, with $M$ accepting $w$ in $k$ steps, so on input $x$, $M'$ also accepts $x$ in $k$ steps. If $k<|x|$, then we are done. Otherwise, let $y$ be any word with length longer than $k$. Since $M'$ ignores its input, it also accepts $y$ in $k$ steps, but $k<|y|$, so $M'\in L$.
 
 So $\langle M'\rangle\in L\Longleftrightarrow\langle M,w\rangle\in\text{A}_\text{TM}$ and hence any oracle for $L$ is also a decider for $\text{A}_\text{TM}$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+
+\section{Sheet 7}
+
+For this sheet, assume that all numbers are given in binary, and the adjacency relation on graphs are given by an adjacency matrix.
+
+\begin{questionbox}{$Q1$}
+    An (undirected) graph $G=(V,E)$ is \textit{connected} if any pair of nodes are connected by a path. Show that
+    \begin{equation*}
+        \text{CONNECTED}=\bigl\{\langle G\rangle\mid G\text{ is a connected graph}\bigr\}
+    \end{equation*}
+    is in $\mathrm{P}$.
+\end{questionbox}
+
+\bigskip
+
+We give a decider with polynomial complexity in the number of vertices as follows:
+
+\begin{enumerate}
+    \item[$(1)$] Input $\langle G\rangle$.
+    
+    \item[$(2)$] Mark an node in $G$.
+
+    \item[$(3)$] \texttt{While} there is at least one unmarked node connected to a marked node, mark such an unmarked node.
+
+    \item[$(4)$] If all nodes are marked, accept. Otherwise reject.
+\end{enumerate}
+
+Given $U\subseteq V$, we write $n(U)$ for the neighbourhood of $U$:
+\begin{align*}
+    n(U)&\coloneqq\bigcup_{v\in X}\{w\mid\{w,v\}\in E\}\\
+    &=\bigl\{w\mid\exists v\in X.\{w,v\}\in E\bigr\}
+\end{align*}
+\begin{algorithm}[H]
+\caption{Decide graph connectivity}
+\begin{algorithmic}[1]
+\Procedure{decide}{$\langle G\rangle$}
+    \State Select a vertex $v_0$.
+    \State $\mathtt{marked}\gets\{v_0\}$
+    \State $\mathtt{unmarked}\gets V(G)\setminus\{v_0\}$
+    \While{$n(\texttt{marked})\cap\mathtt{unmarked}\neq\varnothing$}
+        \State Select a vertex $v\in n(\mathtt{marked})\cap\mathtt{unmarked}$
+        \State $\mathtt{marked}.\mathtt{append}(v)$
+        \State $\mathtt{unmarked}.\mathtt{remove}(v)$
+    \EndWhile
+    \If{$\mathtt{unmarked}=\varnothing$}
+        \State \Return accept
+    \Else
+        \State \Return reject
+    \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+The while-loop runs for at most $n\in O(n)$ steps, since we can only exhaust up to $|V|$-many vertices. Each loop requires checking for unmarked nodes connected to marked nodes, which takes $O(|E|)\subseteq O(n^2)$ time since we need to scan through (a subset of) the edges. The append and remove operations take $O(1)$ time if implemented as hash sets, bitsets, or boolean arrays; or $O(n)$ as dynamic arrays; or $O(\log{n})$ as search trees, etc., but is polynomial in any case. Checking for emptiness is $O(1)$.
+
+So overall, this naïve mplementation takes $O(n^3)$ time, so $\text{CONNECTED}\in\mathrm{P}$.
+
+This can be optimised to $O(|V|+|E|)\subseteq O(n^2)$ time by maintaining a ``frontier'' of edges to check, rather than recomputing $n(\mathtt{marked})$ every loop (as per BFS/DFS algorithms).
+
+\begin{questionbox}{$Q2$}
+    A \textit{$k$-clique} is a complete induced subgraph of a graph. Show that
+    \begin{equation*}
+        \textsf{3-CLIQUE}=\bigl\{\langle G\rangle\mid G\text{ is a graph with a $3$-clique}\bigr\}
+    \end{equation*}
+    is in $\mathrm{P}$.
+\end{questionbox}
+
+\bigskip
+
+There are $\binom{n}{3}=\frac{1}{6}n^3-\frac{1}{2}n^2+\frac{1}{3}n\in O(n^3)$ triples of vertices in $G$, and checking whether a given triple is a clique requires three $O(1)$ lookups (assuming an adjacency matrix representation of $E$). So checking if a $3$-clique exists takes $O(n^3)$ time, so $\textsf{3-CLIQUE}$
+
+
+
+
+
+
+\begin{questionbox}{$Q3$}
+    A \textit{graph homomorphism} from a graph $G$ to a graph $H$ is a function $\varphi:G\rightarrow H$ such that $\bigl(\varphi(u),\varphi(v)\bigr)\in E(H)$ if $(u,v)\in E(G)$. That is, $\varphi$ preserves the adjacency relation on vertices of $G$.
+    
+    A graph homomorphism is an \textit{isomorphism} if it has an inverse that is also a graph homomorphism, or equivalently, if it is bijective and preserves the adjacency relation in both directions. That is, $\bigl(\varphi(u),\varphi(v)\bigr)\in E(H)$ if and only if $(u,v)\in E(G)$. In this case, we say that $G$ and $H$ are isomorphic graphs. Informally, $G$ and $H$ are isomorphic if the nodes in $G$ can be relabelled such that it becomes identical to $H$.
+
+    Show that
+    \begin{equation*}
+        \textsf{GRAPH-ISO}=\bigl\{\langle G,H\rangle\mid G\text{ and }H\text{ are isomorphic graphs}\bigr\}
+    \end{equation*}
+    is in $\mathrm{NP}$.
+\end{questionbox}
+
+\bigskip
+
+A certificate for this problem is a function $\varphi:G\rightarrow H$. Verifying that such a function is a graph isomorphism requires checking that it is a bijection and that it preserves the adjacency relation in both directions.
+
+Checking injectivity requires looping over the vertices in $G$, storing their images, and checking that there are no duplicates, which is $O\bigl(|V(G)|\bigr)$ with a hash map, and checking surjectivity requires looping over the vertices of $H$ and checking against the previous hash, which is $O\bigl(|V(G)|+|V(H)|\bigr)$.
+
+Verifying the forward homomorphism property requires looping over the edges in $G$, which is $O\bigl(|V(G)|\bigr)$, and verifying that their image is in $H$, which is $O(1)$ assuming an adjacency matrix representation. The reverse homomorphism property is similar, taking $O\bigl(|V(H)|\bigr)$ time.
+
+Overall, this takes $O\bigl(|V(G)|+|V(H)|+|E(G)|+|E(H)|\bigr)$ time, which is polynomial.
+
+
+
+\begin{questionbox}{$Q4$}
+    The \textit{bin packing} problem is to determine, given a finite set $S\subseteq\mathbb{N}$ of \textit{item sizes}, a number $k\in\mathbb{N}$ of (identical) \textit{bins}, and a \textit{maximum capacity} $M\in\mathbb{N}$ of each bin, whether the items will fit into the bins without overflowing.
+    \begin{enumerate}
+        \item[$(i)$] Formulate this decision problem as language BINPACK.
+        
+        \item[$(ii)$] Show that $\text{BINPACK}\in\text{NP}$ by providing a non-deterministic polynomial-time Turing machine decider.
+    
+        \item[$(iii)$] Show that $\text{BINPACK}\in\text{NP}$ by providing a deterministic polynomial-time Turing machine verifier.
+    \end{enumerate}
+\end{questionbox}
+
+\bigskip
+
+\begin{enumerate}
+    \item[$(i)$]\hfill
+    \begin{equation*}
+        \text{BINPACK}=\left\{\langle S,k,M\rangle\;\middle|\;\begin{gathered}
+            S\subseteq\mathbb{N},\;k\in\mathbb{N},\;M\in\mathbb{N},\\
+            \exists S_1,\ldots,S_k\subseteq S.
+            \bigcup_{i\in[k]}S_i=S,\\
+            \forall i,j\in[k].(i\neq j)\rightarrow S_i\cap S_j=\varnothing,\\
+            \forall i\in[k].\sum_{s\in S_i}s\leq M\\
+        \end{gathered}
+        \right\}
+    \end{equation*}
+    A partition of $S$ into $k$ parts is equivalent to a function $f:|S|\rightarrow[k]$ (assign ($i\in |S|$)th elemnt of $S$ to the ($j\in[k]$)th bin), so equivalently:
+    \begin{equation*}
+        \text{BINPACK}=\left\{\langle S,k,M\rangle\;\middle|\;\begin{gathered}
+            S\subseteq\mathbb{N},\;k\in\mathbb{N},\;M\in\mathbb{N},\\
+            \exists f:S\rightarrow[k]\;\forall j\in[k].\sum_{s\in f^{-1}\bigl[\{j\}\bigr]}s\leq M\\
+        \end{gathered}
+        \right\}
+    \end{equation*}
+
+    \item[$(ii)$]\hfill
+    \begin{enumerate}
+        \item[$(1)$] Input $\langle S,k,M\rangle$.
+        
+        \item[$(2)$] Non-deterministically split $S$ into a partition $S_1,\ldots,S_k$.
+    
+        \item[$(3)$] For $i=1$ to $k$, compute $\sum_{s\in S_i}s$ and verify that each one is at most $M$.
+    
+        \item[$(4)$] If any sum exceeds $M$, reject. Otherwise accept.
+    \end{enumerate}
+    There are $O(|S|)$ additions performed, with each operation linear in the bit-length of the elements of $S$, and there are $k$-many checks at the end, each of which is linear in bit-length. All of these are (sub-)polynomial, so the algorithm is polynomial-time, and $\text{BINPACK}\in\mathrm{NP}$.
+\end{enumerate}
+
+Computing the exact time complexity of this algorithm is slightly involved. Let $n=|S|$.
+
+Firstly, guessing the partition is not constant time: interpreting a partition as a function $f:[n]\rightarrow[k]$, this requires writing down $n$ integers, each $O(\log{k})$ bits long, costing $O(n\log{k})$ in total.
+
+Now, let $m=\max_{s\in S}\lceil\log{s}\rceil$ be the largest bit-length of an element in $S$. Then, for each $s\in S$, $s<2^m$, so
+\begin{equation*}
+    \sum_{s\in S}s<n\cdot2^m\leq2^{m+\log{n}}
+\end{equation*}
+so the bit-length of any summand is at most $O(m+\log n)$. There are $n$ additions to compute, and addition is linear in bit-length, so this costs $O\bigl(n(m+\log{n})\bigr)$ overall.
+
+We then perform $k$-many comparisons, each costing $O\bigl(\max(m+\log{n},\lceil\log{M}\rceil)\bigr)$, which is $O\bigl(k(m+\log{n}+\lceil\log{M}\rceil)\bigr)$ in total.
+
+So this algorithm is $O\bigl(n\log{k}+n(m+\log{n})+k(m+\log{n}+\lceil\log{M}\rceil)\bigr)$. In terms of the input length $L\in\Theta(nm+\log{k}+\log{M})$, the algorithm takes $O(L^2+L\log{L})=O(L^2)$, which is polynomial. (Since $k\leq n$ for any non-trivial instance of bin-packing, this complexity simplifies to $O\bigl(n(m+\log{n}+\log{k}+\lceil\log{M}\rceil)\bigr)=O(L\log{L})$ in practice.)
+
+
+In any case, this
+
+\begin{enumerate}
+    \item[$(iii)$] Steps $3$ and $4$ in the previous algorithm constitute a deterministic polynomial-time verification algorithm.
+\end{enumerate}
+
+
+
+\begin{questionbox}{$Q5$}
+    The following algorithms erroneously claim to decide $\text{PATH}$ in non-deterministic polynomial-time. Find and explain the mistakes.
+    \begin{itemize}
+        \item Algorithm $1$:
+        \begin{itemize}
+            \item[$(1)$] Input $\langle G,s,t\rangle$.
+            \item[$(2)$] Non-deterministically select a number $k\in\mathbb{N}$.
+            \item[$(3)$] Non-deterministically select a list of $k$ vertices from $G$.
+            \item[$(4)$] Verify that the first node is $s$, the last node is $t$, and each pair of adjacent nodes are connected by an edge in $G$.
+            \item[$(5)$] If this is the case, accept. Otherwise reject.
+        \end{itemize}
+        \item Algorithm $2$:
+        \begin{itemize}
+            \item[$(1)$] Input $\langle G,s,t\rangle$ of length $n$.
+            \item[$(2)$] Non-deterministically select a number $k\leq 2^n$.
+            \item[$(3)$] Non-deterministically select a list of $k$ vertices from $G$.
+            \item[$(4)$] Verify that the first node is $s$, the last node is $t$, and each pair of adjacent nodes are connected by an edge in $G$.
+            \item[$(5)$] If this is the case, accept. Otherwise reject.
+        \end{itemize}
+    \end{itemize}
+\end{questionbox}
+
+\bigskip
+
+\begin{enumerate}
+    \item[$(i)$] In step $(2)$, the algorithm attempts to non-deterministically select a number $k\in\mathbb{N}$. However, Turing machines can only have finitely-many states, so the computation tree must be finitely-branching. This step, taken literally, is not finitely-branching, and thus does not describe a Turing machine at all.
+    
+    This issue can be amended by guessing $k$ bit-by-bit so that the branching is finite, but the machine could then generate arbitrarily large $k$ on some branches -- in particular, values of $k$ that are not polynomially bounded in the size of the input.
+    
+    \item[$(ii)$] This version attempts to patch this issue by bounding $k$ by $2^n$, but this bound is too permissive, and still allows super-exponential branches. In particular, steps $3$ and $4$ require looping over (at least) $k$-many vertices, so if $k=2^n$, then this already takes $O(2^n)$ time to verify.
+\end{enumerate}
+
+To fix the algorithm, we can simply bound $k$ by $|V(G)|$. This is sufficient since there is no point visiting a vertex more than once when attempting to determine reachability. With this bound, representing $k$ costs $O(\log{n})$; writing the list of vertices costs $O(n\log{n})$; and verifying the list costs $O(n)$.
+
+
+
+
+\begin{questionbox}{$Q6$}
+    Show that
+    \begin{equation*}
+        \text{MODEXP}=\bigl\{\langle a,b,c,p\rangle\mid a,b,c,p\in\mathbb{Z}^+\text{ and }a^b\equiv c\bmod p\bigr\}
+    \end{equation*}
+    is in $\mathrm{P}$.
+\end{questionbox}
+
+\bigskip
+
+We cannot naïvely compute $a^b$ and then reduce the result modulo $p$, because $a^b$ is exponential in the size of $b$. Instead, we can compute the exponential in stages, and reduce modulo $p$ at every step, thus bounding the size by $p$.
+
+We can do this efficiently by using the binary representation of $b$. If $b=b_kb_{k-1}\cdots b_1b_0$ is the binary representation of $b$, then
+\begin{align*}
+    a^b=a^{\sum_{i=0}^{k-1}b_i2^i}=\prod_{i=0}^{k-1}a^{b_i2^i}=\prod_{i=0}^{k-1}(a^{2^i})^{b_i}=\prod_{b_i=1}a^{2^i}
+\end{align*}
+That is, we can reconstruct $a^b$ by computing $a^1,a^2,a^4,a^8,a^{16},\ldots,a^{k-2},a^{k-1}$, then multiplying the terms corresponding to non-zero bits in the binary expansion of $b$.
+
+% In fact, we can do these two steps in parallel by observing that squaring the current result corresponds to bit-shifting to the left by one position, and multiplying by $a$ after a squaring corresponds to incrementing the last digit.
+
+% Explicitly, for an integer $n\geq1$ with binary expansion $n=b_kb_{k-1}\cdots b_1b_0$:
+% \begin{equation*}
+%     x^n=\begin{cases}
+%         x(x^2)^{(n-1)\gg1} & n=b_k\ldots b_2b_11\\
+%         (x^2)^{n\gg1} & n=b_k\ldots b_2b_10\\
+%     \end{cases}
+% \end{equation*}
+
+% For example,
+% \begin{align*}
+%     x^{26}&=x^{11010_2}\\
+%     &=(x^{1101_2})^2\\
+%     &=(x\cdot(x^{1100_2}))^2\\
+%     &=(x\cdot(x^{110_2})^2)^2\\
+%     &=(x\cdot((x^{11_2})^2)^2)^2\\
+%     &=(x\cdot((x\cdot(x^{10_2}))^2)^2)^2\\
+%     &=(x\cdot((x\cdot(x^{1_2})^2)^2)^2)^2\\
+%     &=(x\cdot((x\cdot(x\cdot(1)^2)^2)^2)^2)^2\\
+% \end{align*}
+% i.e.:
+% \begin{itemize}
+%     \item[(-)] Start with $1$;
+%     \item[(1)] Square, then multiply by $x$;
+%     \item[(1)] Square, then multiply by $x$;
+%     \item[(0)] Square;
+%     \item[(1)] Square; then multiply by $x$;
+%     \item[(0)] Square;
+% \end{itemize}
+
+We can optimise this further by only holding one power of $a$ at a time and accumulating the result of the partial computation at each step:
+
+\begin{algorithm}[H]
+\caption{Decide modular exponentiation}
+\begin{algorithmic}[1]
+\Procedure{decide}{$\langle a,b,c,p\rangle$}
+    \State $\mathtt{result}\gets1$
+    \State $\mathtt{base}\gets a\bmod p$
+    \For{$i=0$ to $\lceil\log_2b\rceil-1$}
+        \If{$b_i = 1$}
+            \State $\mathtt{result}\gets(\mathtt{result}\cdot\mathtt{base})\bmod p$
+        \EndIf
+        \State $\mathtt{base}\gets(\mathtt{base}\cdot\mathtt{base})\bmod p$
+    \EndFor
+    \If{$\mathtt{result}=c\bmod p$}
+        \State \Return accept
+    \Else
+        \State \Return reject
+    \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+There are $\lceil\log b\rceil$-many iterations in the for-loop, each of which requiring at most $2$ modular multiplications. Since all of the numbers involved are bounded by $p$, multiplication is at most $O\bigl((\log{p})^2\bigr)$ with classical algorithms,\footnote{Modern algorithms can improve this to $O(\log{p}\log\log{p})$ or better, but we just need any polynomial bound.} and produces an integer of length at most $2\log{p}$; computing the modular remainder of the result (i.e. integer division) then costs $O\bigl((2\log{p})^2\bigr)$. Finally, the equality check takes $O(\log{p})$ time.
+
+So the total running time is $O\bigl(\log{b}(\log{p})^2\bigr)$. In terms of the input length $L\in\Theta(\log a+\log b+\log c+\log p)$, this algorithm is $O(L^3)$, which is polynomial.
+
+
+
+
+
+
+
+
+
+\begin{questionbox}{$Q7$}
+    Show that the class $\mathrm{P}$ is closed under Kleene star.
+\end{questionbox}
+
+\bigskip
+
+Let $L\in\mathrm{P}$, and let $M$ be a deterministic Turing machine deciding the membership of a word $w$ of length $n$ in $L$ in $O(n^c)$.
+
+Given a word $w\in L$, there are $2^{n-1}$ decompositions of $w$ into substrings, so naïvely checking all possible decompositions of $w$ is not viable. However, we can use dynamic programming and incrementally test membership of small substrings of $w$, memoising the results in a fast-access data structure to speed up later larger strings.
+
+\begin{enumerate}
+    \item[$(1)$] Initialise a Boolean array $A[0..n]$.
+    
+    We will fill in this array such that $A[i]=\mathtt{true}$ if and only if $w[0..i-1]\in L^\ast$, so $w\in L^\ast$ if and only if $A[n]=\mathtt{true}$.
+    
+    \item[$(2)$] First, $A[0]=\mathtt{true}$ because $w[0..-1]=\varepsilon$ is always in $L^\ast$.
+
+    \item[$(3)$] Then, for $i\in[1,n]$ and for $j\in[0,i-1]$, we split $w[0..i-1]$ at the $j$th position to obtain $w[0..j-1]$ and $w[j..i-1]$. The former is a string strictly shorter than $w[0..i-1]$ whose membership can be read from $A$, and the latter can be decided by $M$.
+
+    \item[$(4)$] If both checks return true, then set $A[i]=\mathtt{true}$ and \texttt{break}.
+
+    \item[$(5)$] Accept if $A[n]=\mathtt{true}$.
+\end{enumerate}
+
+\begin{algorithm}[H]
+\caption{Decide Kleene star}
+\begin{algorithmic}[1]
+\Procedure{decide}{$w$}
+    \State $n\gets|w|$
+    \State $A[0..n]\gets[]$
+    \State $A[0]\gets\texttt{true}$
+    \For{$i = 1$ to $n$}
+        \State $A[i]\gets\mathtt{false}$
+        \For{$j=0$ to $i-1$}
+            \If{$A[j]=\mathtt{true}$ and $M\bigl(w[j..i-1]\bigr)$}
+                \State $A[i]\gets\mathtt{true}$
+                \State \texttt{break}
+            \EndIf
+        \EndFor
+    \EndFor
+    \If{$A[n] = \text{true}$}
+        \State \Return accept
+    \Else
+        \State \Return reject
+    \EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+The outer for-loop has $O(n)$ iterations, and the inner for-loop runs at most $n$ times. Each check of $A[j]$ takes $O(1)$ time, and each query of $M$ takes $O\bigl((i-j)^c\bigr)\subseteq O(n^c)$ time. So, the overall running time is $O(n^{c+2})$, which is polynomial.
 
 
 
